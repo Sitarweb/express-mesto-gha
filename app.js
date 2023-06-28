@@ -17,6 +17,8 @@ app.use(bodyParser.json());
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 
+app.use('/', (req, res) => res.send({ message: 'Страница не найдена' }));
+
 async function connect() {
   await mongoose.connect('mongodb://127.0.0.1:27017/mestodb', {});
   await app.listen(PORT);
