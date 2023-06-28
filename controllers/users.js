@@ -15,12 +15,12 @@ module.exports.getUsers = (req, res) => {
 module.exports.getUserById = (req, res) => {
   User.findById(req.params.userId)
     .then((user) => {
-      if (!user) throw new Error('Пользователь c указанным id не найден');
+      if (!user) throw new Error('Not found');
       else res.status(OK).send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') res.status(BAD_REQUEST).send({ message: 'Невалидный id пользователя' });
-      if (err.message === 'Not found') res.status(NOT_FOUND).send({ message: 'Пользователь c указанным id не найден' });
+      else if (err.message === 'Not found') res.status(NOT_FOUND).send({ message: 'Пользователь c указанным id не найден' });
       else res.status(SERVER_ERROR).send({ message: 'Произошла ошибка на сервере' });
     });
 };
@@ -40,10 +40,13 @@ module.exports.updateUser = (req, res) => {
   const { name, about } = req.body;
 
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
-    .then((user) => res.status(OK).send(user))
+    .then((user) => {
+      if (!user) throw new Error('Not found');
+      else res.status(OK).send(user);
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') res.status(BAD_REQUEST).send({ message: 'Переданы невалидные данные' });
-      if (err.message === 'Not found') res.status(NOT_FOUND).send({ message: 'Пользователь c указанным id не найден' });
+      else if (err.message === 'Not found') res.status(NOT_FOUND).send({ message: 'Пользователь c указанным id не найден' });
       else res.status(SERVER_ERROR).send({ message: 'Произошла ошибка на сервере' });
     });
 };
@@ -52,10 +55,13 @@ module.exports.updateAvatar = (req, res) => {
   const { avatar } = req.body;
 
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
-    .then((user) => res.status(OK).send(user))
+    .then((user) => {
+      if (!user) throw new Error('Not found');
+      else res.status(OK).send(user);
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') res.status(BAD_REQUEST).send({ message: 'Переданы невалидные данные' });
-      if (err.message === 'Not found') res.status(NOT_FOUND).send({ message: 'Пользователь c указанным id не найден' });
+      else if (err.message === 'Not found') res.status(NOT_FOUND).send({ message: 'Пользователь c указанным id не найден' });
       else res.status(SERVER_ERROR).send({ message: 'Произошла ошибка на сервере' });
     });
 };
