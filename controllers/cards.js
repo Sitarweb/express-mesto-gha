@@ -4,11 +4,10 @@ const Card = require('../models/card');
 const BAD_REQUEST = http2.constants.HTTP_STATUS_BAD_REQUEST;
 const NOT_FOUND = http2.constants.HTTP_STATUS_NOT_FOUND;
 const SERVER_ERROR = http2.constants.HTTP_STATUS_INTERNAL_SERVER_ERROR;
-const OK = http2.constants.HTTP_STATUS_OK;
 
 module.exports.getCards = (req, res) => {
   Card.find({})
-    .then((cards) => res.status(OK).send(cards))
+    .then((cards) => res.send(cards))
     .catch(() => res.status(SERVER_ERROR).send({ message: 'Произошла ошибка на сервере' }));
 };
 
@@ -16,7 +15,7 @@ module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
 
   Card.create({ name, link, owner: req.user._id })
-    .then((card) => res.status(OK).send(card))
+    .then((card) => res.send(card))
     .catch((err) => {
       if (err.name === 'ValidationError') res.status(BAD_REQUEST).send({ message: 'Переданы невалидные данные' });
       else res.status(SERVER_ERROR).send({ message: 'Произошла ошибка на сервере' });
@@ -27,7 +26,7 @@ module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
     .then((card) => {
       if (!card) throw new Error('Card not found');
-      else res.status(OK).send(card);
+      else res.send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') res.status(BAD_REQUEST).send({ message: 'Невалидный id карточки' });
@@ -41,7 +40,7 @@ module.exports.putLike = (req, res) => {
     .populate(['owner', 'likes'])
     .then((card) => {
       if (!card) throw new Error('Card not found');
-      else res.status(OK).send(card);
+      else res.send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') res.status(BAD_REQUEST).send({ message: 'Невалидный id карточки' });
@@ -51,11 +50,11 @@ module.exports.putLike = (req, res) => {
 };
 
 module.exports.deleteLike = (req, res) => {
-  Card.findByIdAndDelete(req.params.cardId, { $pull: { likes: req.user._id } }, { new: true })
+  Card.findByIdAndUpdate(req.params.cardId, { $pull: { likes: req.user._id } }, { new: true })
     .populate(['owner', 'likes'])
     .then((card) => {
       if (!card) throw new Error('Card not found');
-      else res.status(OK).send(card);
+      else res.send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') res.status(BAD_REQUEST).send({ message: 'Невалидный id карточки' });

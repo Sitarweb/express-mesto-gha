@@ -1,9 +1,17 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 const bodyParser = require('body-parser');
 
 const { PORT = 3000 } = process.env;
 const app = express();
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: 'Слишком много запросов, пожалуйста, повторите попытку позже',
+});
 
 app.use((req, res, next) => {
   req.user = {
@@ -13,6 +21,8 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(helmet());
+app.use(limiter);
 app.use(bodyParser.json());
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
