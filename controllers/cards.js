@@ -31,7 +31,7 @@ module.exports.deleteCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') res.status(BAD_REQUEST).send({ message: 'Невалидный id карточки' });
-      else if (err.message === 'Card not found') res.status(NOT_FOUND).send({ message: 'Карточка с указанным id не найдена' });
+      else if (err.message === 'Card not found') res.status(NOT_FOUND).send({ message: 'Карточка с указанным _id не найдена' });
       else res.status(SERVER_ERROR).send({ message: 'Произошла ошибка на сервере' });
     });
 };
