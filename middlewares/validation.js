@@ -19,7 +19,7 @@ module.exports.signin = celebrate({
 
 module.exports.getUserByIdValidation = celebrate({
   params: Joi.object().keys({
-    getId: Joi.string().alphanum().length(24),
+    userId: Joi.string().alphanum().length(24),
   }),
 });
 
@@ -45,18 +45,18 @@ module.exports.createCardValidation = celebrate({
 
 module.exports.deleteCardValidation = celebrate({
   params: Joi.object().keys({
-    deleteId: Joi.string().alphanum().length(24),
+    cardId: Joi.string().alphanum().length(24),
   }),
 });
 
 module.exports.putLikeValidation = celebrate({
   params: Joi.object().keys({
-    putId: Joi.string().alphanum().length(24),
+    cardId: Joi.string().alphanum().length(24),
   }),
 });
 
 module.exports.deleteLikeValidation = celebrate({
   params: Joi.object().keys({
-    deleteId: Joi.string().alphanum().length(24),
+    cardId: Joi.string().alphanum().length(24),
   }),
 });
