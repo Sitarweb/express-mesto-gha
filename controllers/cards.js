@@ -1,8 +1,10 @@
+const http2 = require('node:http2');
 const Card = require('../models/card');
 const NotFoundError = require('../errors/not-found-err');
 const BadRequestError = require('../errors/bad-request-err');
 const ForbiddenError = require('../errors/forbidden-err');
-const CREATED = require('../utils/const');
+
+const CREATED = http2.constants.HTTP_STATUS_CREATED;
 
 module.exports.getCards = (req, res, next) => {
   Card.find({})
