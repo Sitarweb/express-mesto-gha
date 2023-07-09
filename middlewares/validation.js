@@ -1,25 +1,26 @@
 const { celebrate, Joi } = require('celebrate');
+const regular = require('../utils/const');
 
 module.exports.signup = celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string().pattern(/^https?:\/\/(www.)?[a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=]*#?$/),
+    avatar: Joi.string().pattern(regular),
     email: Joi.string().required().email(),
-    password: Joi.string().min(8).required(),
+    password: Joi.string().required(),
   }),
 });
 
 module.exports.signin = celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
-    password: Joi.string().min(8).required(),
+    password: Joi.string().required(),
   }),
 });
 
 module.exports.getUserByIdValidation = celebrate({
   params: Joi.object().keys({
-    userId: Joi.string().alphanum().length(24),
+    userId: Joi.string().length(24).hex().required(),
   }),
 });
 
@@ -32,31 +33,31 @@ module.exports.updateUserValidation = celebrate({
 
 module.exports.updateAvatarValidation = celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().pattern(/^https?:\/\/(www.)?[a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=]*#?$/),
+    avatar: Joi.string().pattern(regular),
   }),
 });
 
 module.exports.createCardValidation = celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30).required(),
-    link: Joi.string().required().pattern(/^https?:\/\/(www.)?[a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=]*#?$/),
+    link: Joi.string().required().pattern(regular),
   }),
 });
 
 module.exports.deleteCardValidation = celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().alphanum().length(24),
+    cardId: Joi.string().length(24).hex().required(),
   }),
 });
 
 module.exports.putLikeValidation = celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().alphanum().length(24),
+    cardId: Joi.string().length(24).hex().required(),
   }),
 });
 
 module.exports.deleteLikeValidation = celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().alphanum().length(24),
+    cardId: Joi.string().length(24).hex().required(),
   }),
 });

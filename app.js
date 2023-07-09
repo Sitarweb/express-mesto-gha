@@ -7,8 +7,10 @@ const { errors } = require('celebrate');
 const { login, createUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 const { signup, signin } = require('./middlewares/validation');
+const NotFoundError = require('./errors/not-found-err');
+const errorHandler = require('./middlewares/error-handler');
 
-const { PORT = 3000 } = process.env;
+const { PORT = 3000, DB_URL = 'mongodb://127.0.0.1:27017/mestodb' } = process.env;
 const app = express();
 
 const limiter = rateLimit({
@@ -25,18 +27,16 @@ app.post('/signup', signup, createUser);
 app.use('/users', auth, require('./routes/users'));
 app.use('/cards', auth, require('./routes/cards'));
 
-app.use('/', auth, (req, res) => res.status(404).send({ message: 'Страница не найдена' }));
+app.use('*', (req, res, next) => {
+  next(new NotFoundError('Маршрут не найден'));
+});
 
 app.use(errors());
 
-app.use((err, req, res, next) => {
-  const { statusCode = 500, message } = err;
-  res.status(statusCode).send({ message: statusCode === 500 ? 'На сервере произошла ошибка' : message });
-  next();
-});
+app.use(errorHandler);
 
 async function connect() {
-  await mongoose.connect('mongodb://127.0.0.1:27017/mestodb', {});
+  await mongoose.connect(DB_URL, {});
   await app.listen(PORT);
 }
 
