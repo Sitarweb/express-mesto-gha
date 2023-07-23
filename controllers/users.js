@@ -36,15 +36,24 @@ module.exports.getUserById = (req, res, next) => {
 };
 
 module.exports.createUser = (req, res, next) => {
-  const {
-    name, about, avatar, email, password,
-  } = req.body;
+  const newUser = req.body;
 
-  bcrypt.hash(password, 10)
+  bcrypt.hash(newUser.password, 10)
     .then((hash) => User.create({
-      name, about, avatar, email, password: hash,
+      name: newUser.name,
+      about: newUser.about,
+      avatar: newUser.avatar,
+      email: newUser.email,
+      password: hash,
     }))
-    .then((user) => res.status(CREATED).send(user))
+    .then((user) => {
+      const {
+        name, about, avatar, email,
+      } = user;
+      res.status(CREATED).send({
+        name, about, avatar, email,
+      });
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError('Переданы невалидные данные'));
